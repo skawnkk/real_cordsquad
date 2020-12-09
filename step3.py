@@ -28,7 +28,7 @@ for _ in range(3):
 
 
 def paintCube(cube):
-
+    
     for i in range(3):  
         for j in range(3):
             print(cube[0][i][j], end="")
@@ -47,6 +47,7 @@ def paintCube(cube):
         for j in range(3):
             print(cube[5][i][j], end="")
         print()
+    print()
 
 
 # -입력함수처리 및 동작함수----------------------------------------------------
@@ -63,9 +64,8 @@ def linkedFace(cube,index):
     cube[index][2][2] = cube[index][0][2]
     cube[index][0][1] = cube[index][1][0]        
     cube[index][0][2] = target
-    
- 
-def U(cube,repeat):
+
+def U(cube):
     target = cube[1][0] 
     cube[1][0] = cube[2][0]
     cube[2][0] = cube[3][0]
@@ -73,7 +73,7 @@ def U(cube,repeat):
     cube[4][0] = target
     linkedFace(cube, 0)
 
-def F(cube, repeat):
+def F(cube):
     target=cube[0][2]
     cube[0][2] = [cube[4][2][2], cube[4][1][2], cube[4][0][2]]
     cube[4][2][2], cube[4][1][2], cube[4][0][2] = cube[5][0]
@@ -81,7 +81,7 @@ def F(cube, repeat):
     cube[2][0][0], cube[2][1][0], cube[2][2][0]  = target
     linkedFace(cube, 1)
 
-def R(cube, repeat):
+def R(cube):
     target = [cube[1][0][2], cube[1][1][2], cube[1][2][2]]
     cube[1][0][2], cube[1][1][2], cube[1][2][2] = cube[5][0][2], cube[5][1][2], cube[5][2][2]
     cube[5][0][2], cube[5][1][2], cube[5][2][2] = cube[3][2][0], cube[3][1][0], cube[3][0][0]
@@ -89,7 +89,7 @@ def R(cube, repeat):
     cube[0][0][2], cube[0][1][2], cube[0][2][2] = target
     linkedFace(cube, 2)
 
-def L(cube, repeat):
+def L(cube):
     target = [cube[1][0][0], cube[1][1][0], cube[1][2][0]]
     cube[1][0][0], cube[1][1][0], cube[1][2][0] = cube[0][0][0], cube[0][1][0], cube[0][2][0]
     cube[0][0][0], cube[0][1][0], cube[0][2][0] = cube[3][2][2], cube[3][1][2], cube[3][0][2]
@@ -98,41 +98,53 @@ def L(cube, repeat):
     linkedFace(cube, 4)
         
 
-def matching_func(cube, y, i, repeat):
-    for _ in range(repeat):
-        if y[i] == "U":
-            U(cube, repeat)
-        if y[i] == "F":
-            F(cube, repeat)
-        if y[i] == "R":
-            R(cube, repeat)
-        if y[i] == "L":
-            L(cube, repeat)
+def matching_func(cube, y, i):
+    if y[i] == "U":
+        U(cube)
+    if y[i] == "F":
+        F(cube)
+    if y[i] == "R":
+        R(cube)
+    if y[i] == "L":
+        L(cube)
 
 def perform_order(cube,y):
+    global count
     
     for i in range(len(y)):
-        repeat=1
-        if (len(y)==1 and i==0) or (i==len(y)-1):
-            matching_func(cube, y,i,repeat)
-
+        
+        if (len(y)==1 and i==0) or (y[i] in alphabet and i==len(y)-1):
+            count+=1
+            matching_func(cube, y,i)
+            print(y[i])
+            paintCube(cube)
+           
         elif len(y)>1 and i<len(y)-1:
             if y[i] in alphabet and y[i+1] in alphabet:
-                matching_func(cube,y,i,repeat)
+                count+=1
+                matching_func(cube,y,i)
+                print(y[i])
+                paintCube(cube)
                     
             elif y[i] in alphabet and y[i+1]=="'":
-                repeat=3
-                matching_func(cube,y,i,repeat)
+                count+=1
+                for _ in range(3):
+                    matching_func(cube,y,i)
+                print(y[i]+y[i+1])
+                paintCube(cube)
 
             elif y[i] in alphabet and y[i+1]=="2":
-                repeat=2
-                matching_func(cube,y,i,repeat)
-    paintCube(cube)
+                count+=1
+                for _ in range(2):
+                    matching_func(cube,y,i)
+                print(y[i]+y[i+1])
+                paintCube(cube)
+    
   
 
 # --조건 및 입력 받는 부분----------------------------------------------------")
 
-order=['F','R','U','B','L','D',"'","2"]
+input_list=['F','R','U','B','L','D',"'","2","Q"]
 alphabet=['F','R','U','B','L','D']
 
 keepgoing=True
@@ -142,13 +154,13 @@ count=0
 while True:
     y = input('CUBE>').upper()
     for i in y:
-        if i not in order:
+        if i not in input_list:
             print('typing_error!')
             keepgoing=False
             break
         elif i=='Q':
             print("경과시간:")
-            print("조작갯수:")
+            print("조작갯수:", count)
             print("이용해주셔서 감사합니다. 뚜뚜뚜.")
             keepgoing=False
             break
@@ -156,5 +168,5 @@ while True:
         break
     perform_order(cube,y)
 
-# -루빅큐브 초기상태 평면도 구현---------------------------------------------
+
 
