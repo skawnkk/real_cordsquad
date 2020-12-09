@@ -4,7 +4,7 @@ B B B
 B B B
 B B B
 
-< 1 >      < 2 >     < 3 >     < 4 >
+< 1 >     < 2 >     < 3 >     < 4 >
 W W W     O O O     G G G     Y Y Y 
 W W W     O O O     G G G     Y Y Y 
 W W W     O O O     G G G     Y Y Y 
@@ -143,23 +143,27 @@ def perform_order(cube,y):
   
 
 # --조건 및 입력 받는 부분----------------------------------------------------")
-
+import time
 input_list=['F','R','U','B','L','D',"'","2","Q"]
 alphabet=['F','R','U','B','L','D']
 
 keepgoing=True
 paintCube(cube)
+start=time.time()
 count=0
 
 while True:
     y = input('CUBE>').upper()
+    
     for i in y:
         if i not in input_list:
             print('typing_error!')
             keepgoing=False
             break
         elif i=='Q':
-            print("경과시간:")
+            end=time.time()
+            interval = time.localtime(end-start)
+            print("경과시간:", time.strftime('%M:%S', interval))
             print("조작갯수:", count)
             print("이용해주셔서 감사합니다. 뚜뚜뚜.")
             keepgoing=False
