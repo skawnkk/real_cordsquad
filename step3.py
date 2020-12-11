@@ -1,7 +1,3 @@
-
-# TODO: 1.무작위 섞기 기능 추가 
-#// TODO: 2.큐브를 완성했을 때 축하 메시지 띄우기
-#// TODO: 3. B, D 함수 만들자
 ''' 
 < 0 >
 B B B  
@@ -18,9 +14,7 @@ R R R
 R R R 
 R R R 
 '''
-
 def linkedFace(cube,index):
-
     target = cube[index][0][0]
     cube[index][0][0] = cube[index][2][0]
     cube[index][1][0] = cube[index][2][1]
@@ -79,24 +73,21 @@ def L(cube):
     cube[5][2][0], cube[5][1][0], cube[5][0][0] = target
     linkedFace(cube, 4)
         
-
-def matching_func(cube, y, i):
-    if y[i] == "U":
+def matching_func(cube, z):
+    if z[0] == "U":
         U(cube)
-    if y[i] == "D":
+    if z[0] == "D":
         D(cube)
-    if y[i] == "F":
+    if z[0] == "F":
         F(cube)
-    if y[i] == "B":
+    if z[0] == "B":
         B(cube)
-    if y[i] == "R":
+    if z[0] == "R":
         R(cube)
-    if y[i] == "L":
+    if z[0] == "L":
         L(cube)
 
-
 def checkResult(cube, start):
-     
     if cube==perfect_cube:
         print("축하합니다😆\n큐브를 맞췄어요!!✨\n")
         quit(cube, start)
@@ -104,50 +95,94 @@ def checkResult(cube, start):
         gameStart(cube, start)
 
 def perform_order(cube,y):
-    global count
-    
-    for i in range(len(y)): #!조건 구분 간결하게 정리하기.
+    global count  
+    z=list(y)
+    for i in range(len(z)):
+        if z[i] not in orderlist:
+            print("typing_Error")
+            gameStart(cube, start)
+            return
         
-        if len(y)==1 and y in alphabet:
-            count+=1
-            matching_func(cube, y,i)
-            print(y[i])
-            paintCube(cube, start)
-        
-                
-        elif len(y)>1 and y[i] in alphabet and i<len(y)-1: #y+i가 존재하는 경우
-            if y[i+1] in alphabet:
+    while z:
+        if len(z)==1:
+            if z[0] in alphabet:
                 count+=1
-                matching_func(cube,y,i)
-                print(y[i])
+                print(z[0])
+                matching_func(cube, z[0])
                 paintCube(cube, start)
-                    
-            elif y[i+1]=="'":
+                z.pop(0)
+            else:
+                print("Typing_ERROR:", z[0])
+                gameStart(cube, start)
+
+        elif len(z)>1:
+            if z[0] in alphabet and z[1] in alphabet:
                 count+=1
+                print(z[0])
+                matching_func(cube, z[0])
+                paintCube(cube, start)
+                z.pop(0)
+
+            elif z[0] in alphabet and z[1]=="'":
+                count+=1
+                print(z[0]+z[1])
                 for _ in range(3):
-                    matching_func(cube,y,i)
-                print(y[i]+y[i+1])
+                    matching_func(cube,z[0]+z[1])
                 paintCube(cube, start)
-                
-            elif y[i+1]=="2":
-                count+=1
                 for _ in range(2):
-                    matching_func(cube,y,i)
-            
-                print(y[i]+y[i+1])
+                    z.pop(0)  
+
+            elif z[0] in alphabet and z[1]=="2":
+                count+=1
+                print(z[0]+z[1])
+                for _ in range(2):
+                    matching_func(cube, z[0]+z[1])
                 paintCube(cube, start)
-
-        elif len(y)>1 and y[i] in alphabet and i==len(y)-1: #y[i]가 마지막 값, y+i가 없는 경우
-            count+=1
-            matching_func(cube, y,i)
-            print(y[i])
-            paintCube(cube, start)
-
+                for _ in range(2):
+                    z.pop(0)
+                
+            elif z[0] not in alphabet:
+                print("Typing_ERROR:",z[0])
+                gameStart(cube, start)
     checkResult(cube, start)
 
+def perform_random_order(cube,y):
+    z=list(y)
+    while z:
+        if len(z)==1 and z[0] in alphabet:
+            matching_func(cube, z[0])
+            z.pop(0)
+             
+        elif len(z)>1:
+            if z[0] in alphabet and z[1] in alphabet:
+                matching_func(cube, z[0])
+                z.pop(0)
+
+            elif z[0] in alphabet and z[1]=="'":
+                for _ in range(3):
+                    matching_func(cube,z[0]+z[1])
+                for _ in range(2):
+                    z.pop(0)
+    
+            elif z[0] in alphabet and z[1]=="2":
+                for _ in range(2):
+                    matching_func(cube, z[0]+z[1])
+                for _ in range(2):
+                    z.pop(0)
+
+    paintCube(cube, start)
+    gameStart(cube, start)
         
 def randomCube():
-    print("will be ready")
+    arr=[]
+    for _ in range(len(alphabet)):
+        alphabet_random = random.sample(alphabet,1)
+        special_random = random.sample(special,1)
+        arr.append(''.join(alphabet_random+special_random))
+    random_order=''.join(arr)
+    print("▶Mixed Cube:")
+    # print(random_order)
+    perform_random_order(init_cube, random_order)
 
 def quit(cube, start):
     end=time.time()
@@ -160,6 +195,7 @@ def gameStart(cube, start):
     y = input('CUBE>').upper()
     if y=="Q":
         quit(cube, start)
+        return
     else:
         perform_order(cube, y)    
 
@@ -187,7 +223,7 @@ def paintCube(cube, start):
     
 # --조건 및 입력 받는 부분----------------------------------------------------")
 
-import time
+import time, random
 
 color='BWOGYR'
 
@@ -199,20 +235,19 @@ for j in range(3):
             init_cube[i][j].append(color[i])   
 
 # 완성큐브
-
 perfect_cube = [[[] for _ in range(3)] for _ in range(6)]
 for j in range(3):
     for i in range(6):
         for _ in range(3):
             perfect_cube[i][j].append(color[i])    
 
-input_list=['F','R','U','B','L','D',"'","2","Q"]
+orderlist=['F','R','U','B','L','D',"'","2","Q"]
 alphabet=['F','R','U','B','L','D']
 special=["'","2",""]
 start=0
 count=0
 
-print("▶ 초기상태:") #초기 큐브 구현
+print("▶ 초기상태:")
 paintCube(init_cube, start)
 
 print("▶ Do you want Mixed Cube?")
