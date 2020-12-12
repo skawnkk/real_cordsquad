@@ -1,5 +1,4 @@
 x= list(map(str,(input().split())))
-print(x)
 
 word=list(x[0])
 move=int(x[1])
