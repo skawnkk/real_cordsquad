@@ -1,5 +1,5 @@
 def expression(x):
-    for a,b,c in x:
+    for a,b,c, in x:
         print(a,b,c)
 
 def U(x, repeat):
@@ -47,10 +47,23 @@ def matching_func(y,i,repeat):
     elif y[i]=="B":
         B(x, repeat)
 
-def perform_order(y):
+
+        
+
+x= [['R', 'R', 'W'], ['G', 'C', 'W'], ['G', 'B', 'B']]
+keepgoing=True
+
+expression(x)
+
+while True:
+    y = input('CUBE>').upper()
 
     for i in range(len(y)):
         if (len(y)==1 and i==0) or (i==len(y)-1):
+            if y[i]=='Q':
+                print("Bye~")
+                keepgoing=False
+                break
             repeat=1
             matching_func(y,i,repeat)
 
@@ -58,29 +71,11 @@ def perform_order(y):
             if y[i]!="'" and y[i+1]!="'":
                 repeat=1
                 matching_func(y,i,repeat)
-                    
+                
             elif y[i]!="'" and y[i+1]=="'":
                 repeat=2
                 matching_func(y,i,repeat)
-                
-            
-
-x= [['R', 'R', 'W'], ['G', 'C', 'W'], ['G', 'B', 'B']]
-z=['U','R','L','B','\'','Q']
-keepgoing=True
-expression(x)
-
-while True:
-    y = input('CUBE>').upper()
-    for i in y:
-        if i not in z:
-            print('typing_error!')
-            keepgoing=False
-            break
-        elif i=='Q':
-            print("Bye~")
-            keepgoing=False
-            break
+    
     if keepgoing==False:
         break
-    perform_order(y)
+    
