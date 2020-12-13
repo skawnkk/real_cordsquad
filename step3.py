@@ -1,19 +1,3 @@
-''' 
-< 0 >
-B B B  
-B B B
-B B B
-
-< 1 >     < 2 >     < 3 >     < 4 >
-W W W     O O O     G G G     Y Y Y 
-W W W     O O O     G G G     Y Y Y 
-W W W     O O O     G G G     Y Y Y 
- 
-< 5 >
-R R R 
-R R R 
-R R R 
-'''
 def linkedFace(cube,index):
     target = cube[index][0][0]
     cube[index][0][0] = cube[index][2][0]
@@ -88,14 +72,15 @@ def matching_func(cube, z):
         L(cube)
 
 def checkResult(cube, start):
-    if cube==perfect_cube:
+    if cube==init_cube:
         print("축하합니다😆\n큐브를 맞췄어요!!✨\n")
         quit(cube, start)
     else: 
         gameStart(cube, start)
 
-def perform_order(cube,y):
-    global count  
+def input_order_check(cube, y, painting):
+    global count, keepgoing
+
     z=list(y)
     for i in range(len(z)):
         if z[i] not in orderlist:
@@ -104,77 +89,60 @@ def perform_order(cube,y):
             return
         
     while z:
-        if len(z)==1:
+        if len(z) == 1:
             if z[0] in alphabet:
                 count+=1
-                print(z[0])
                 matching_func(cube, z[0])
-                paintCube(cube, start)
+                paintCube(cube, z[0], start)
                 z.pop(0)
             else:
-                print("Typing_ERROR:", z[0])
+                if y=="Q":
+                    quit(cube, start)
+                    keepgoing=False
+                    return 
+                print("Typing_ERROR", z[0])
                 gameStart(cube, start)
 
         elif len(z)>1:
             if z[0] in alphabet and z[1] in alphabet:
                 count+=1
-                print(z[0])
                 matching_func(cube, z[0])
-                paintCube(cube, start)
+                if painting==True:
+                    paintCube(cube, z[0], start)
                 z.pop(0)
 
             elif z[0] in alphabet and z[1]=="'":
                 count+=1
-                print(z[0]+z[1])
                 for _ in range(3):
                     matching_func(cube,z[0]+z[1])
-                paintCube(cube, start)
+                if painting==True:
+                    paintCube(cube, z[0], start)
                 for _ in range(2):
                     z.pop(0)  
 
             elif z[0] in alphabet and z[1]=="2":
                 count+=1
-                print(z[0]+z[1])
                 for _ in range(2):
                     matching_func(cube, z[0]+z[1])
-                paintCube(cube, start)
+                if painting==True:
+                    paintCube(cube, z[0]+z[1], start)
                 for _ in range(2):
                     z.pop(0)
                 
             elif z[0] not in alphabet:
                 print("Typing_ERROR:",z[0])
                 gameStart(cube, start)
-    checkResult(cube, start)
-
-def perform_random_order(cube,y):
-    z=list(y)
-    while z:
-        if len(z)==1 and z[0] in alphabet:
-            matching_func(cube, z[0])
-            z.pop(0)
-             
-        elif len(z)>1:
-            if z[0] in alphabet and z[1] in alphabet:
-                matching_func(cube, z[0])
-                z.pop(0)
-
-            elif z[0] in alphabet and z[1]=="'":
-                for _ in range(3):
-                    matching_func(cube,z[0]+z[1])
-                for _ in range(2):
-                    z.pop(0)
     
-            elif z[0] in alphabet and z[1]=="2":
-                for _ in range(2):
-                    matching_func(cube, z[0]+z[1])
-                for _ in range(2):
-                    z.pop(0)
-
-    paintCube(cube, start)
-    gameStart(cube, start)
+    if keepgoing == False:
+        return
+    if painting == False:
+        paintCube(cube, None, start)
+        gameStart(cube, start)
         
 def randomCube():
     arr=[]
+    painting=False
+
     for _ in range(len(alphabet)):
         alphabet_random = random.sample(alphabet,1)
         special_random = random.sample(special,1)
@@ -182,8 +150,8 @@ def randomCube():
     random_order=''.join(arr)
     print("▶Mixed Cube:")
     # print(random_order)
-    perform_random_order(init_cube, random_order)
-
+    input_order_check(init_cube, random_order, painting)
+    
 def quit(cube, start):
     end=time.time()
     interval = time.localtime(end-start)
@@ -193,13 +161,15 @@ def quit(cube, start):
 
 def gameStart(cube, start):
     y = input('CUBE>').upper()
-    if y=="Q":
-        quit(cube, start)
-        return
-    else:
-        perform_order(cube, y)    
+    input_order_check(cube, y, painting)
+    checkResult(cube, start)
 
-def paintCube(cube, start):
+def paintCube(cube, y, start):
+    if y==None:
+        pass
+    else:
+        print(y)
+
     for i in range(3):  
         for j in range(3):
             print(cube[0][i][j], end="")
@@ -222,33 +192,30 @@ def paintCube(cube, start):
 
     
 # --조건 및 입력 받는 부분----------------------------------------------------")
-
 import time, random
 
-color='BWOGYR'
 
-# 초기큐브
+# 초기 및 완성큐브
+color='BWOGYR'
 init_cube = [[[] for _ in range(3)] for _ in range(6)]
 for j in range(3):
     for i in range(6):
         for _ in range(3):
-            init_cube[i][j].append(color[i])   
-
-# 완성큐브
-perfect_cube = [[[] for _ in range(3)] for _ in range(6)]
-for j in range(3):
-    for i in range(6):
-        for _ in range(3):
-            perfect_cube[i][j].append(color[i])    
+            init_cube[i][j].append(color[i])      
 
 orderlist=['F','R','U','B','L','D',"'","2","Q"]
 alphabet=['F','R','U','B','L','D']
 special=["'","2",""]
+
+keepgoing=True
+painting=True
+y=None
+
 start=0
 count=0
 
 print("▶ 초기상태:")
-paintCube(init_cube, start)
+paintCube(init_cube, y, start)
 
 print("▶ Do you want Mixed Cube?")
 mix=input("Enter Y or N:").upper()
@@ -258,5 +225,3 @@ if mix == "Y":
     randomCube()
 elif mix=="N":
     gameStart(init_cube,start)
-
-
