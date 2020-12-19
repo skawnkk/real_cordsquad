@@ -1,12 +1,12 @@
-//todo: printCube하고나서 입력창에 값 지워주기.
-//todo: 예쁜 화살표있으면 프린트큐브에 붙여넣어주기
-//TODO: 게임종료시 alert msg -> 확인 취소
-//todo: 확인-> 작동한 printCube 삭제하기, 
-//todo: 타이핑에러처리.
+////: printCube하고나서 입력창에 값 지워주기.
+////: 게임종료시 alert msg -> 확인 취소
+////: 확인-> 작동한 printCube 삭제하기, 
+////: 타이핑에러처리.
 
 const inputForm = document.querySelector(".submit");
 const submitInput = inputForm.querySelector("input");
 const submitBtn = inputForm.querySelector("button");
+const errorMsg = document.querySelector(".error");
 const printArea = document.querySelector(".printArea");
 const cube = [['R', 'R', 'W'], ['G', 'C', 'W'], ['G', 'B', 'B']];
 
@@ -51,28 +51,29 @@ function moveCube(order,repeat){
             expression(cube, order, repeat);
         },    
         Q(){
-            alert('큐브 작동을 종료합니다?\n작동한 큐브가 사라집니다.');
+            const quit = confirm('큐브 작동을 종료합니다?\n작동한 큐브가 사라집니다.');
+            if (quit){
+                printArea.innerHTML=''
+                init();
+            } 
+            // while (printArea.hasChildNodes()){
+            //     printArea.removeChild(printArea.firstChild);
+            // }
             
         }
     };
-
-    tasks[order]();
-    
+    order&&tasks[order]();
 }
 
 function inputChecking(inputedOrder){
-    const orderList=["R","R'","L","L'","U","U'","B","B'","Q"];
+    const orderList=["R","R'","L","L'","U","U'","B","B'","","Q"];
     const special="'";
     const inputArr = inputedOrder.split(' ');
     inputArr.forEach(order=>{
         if (orderList.includes(order)){
-            if (order[1]){
-                moveCube(order[0], 2);
-            }else{
-                moveCube(order, 1);
-            }
+            order[1] ? moveCube(order[0], 2) : moveCube(order, 1) ;
         } else{
-            console.log('typing_error');
+            errorMsg.innerText= 'Typing_Error : 입력 조건을 확인해주세요.';
         }
     });   
 }
@@ -81,6 +82,7 @@ function handleSubmit(event){
     event.preventDefault();
     const inputedOrder = submitInput.value.toUpperCase();
     inputChecking(inputedOrder);
+    submitInput.value="";
 }
 
 function expression(cube, order, repeat){
@@ -97,12 +99,19 @@ function expression(cube, order, repeat){
     } else if (order && repeat===1){
         printOrder.innerText = order;
     } else {
-        printOrder.innerText = 'Start';
+        printOrder.innerText = 'START';
     };
     
-    printCube.innerText = `${cube[0].join('')}\n${cube[1].join('')}\n${cube[2].join('')}`;
+    printCube.innerText = `${cube[0].join(' ')}\n${cube[1].join(' ')}\n${cube[2].join(' ')}`;
+    errorMsg.innerText = '';
 }
 
-inputForm.addEventListener("submit",handleSubmit);
-submitBtn.addEventListener("click",handleSubmit);
-expression(cube);
+
+function init(){
+    console.log('linked!');
+    expression(cube);
+    inputForm.addEventListener("submit",handleSubmit);
+    submitBtn.addEventListener("click",handleSubmit);
+}
+
+init();

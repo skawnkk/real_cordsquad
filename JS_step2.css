@@ -67,9 +67,9 @@ footer{
 .step2 .result{
     margin-top: 30px;
 }
-.step2 .on{
-    color: red;
 
+.step2 .error{
+    color: red;
 }
 
 .step2 .printArea{
@@ -84,5 +84,8 @@ footer{
     margin-right: 30px;
 }
 
-
+.step2 .parentDiv div:nth-child(1){
+    font-size: smaller;
+    text-align: center;
+}
 
