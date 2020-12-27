@@ -12,34 +12,35 @@
 // > 계산수행순서 : circle, circle, circle, rect
 
 const performed = [];
-
-function getCircle() {
-    performed.push('circle');
-};
-
-const PI = Math.PI;
+const values = [];
+const PI = Math.PI.toFixed(2);
 let sum = 0;
 
 
 function getArea(figure, r, r2, r3) {
-    performed.push(figure);
+
 
     const area = {
         circle(r) {
-            console.log(PI * r ** 2);
+            const result = PI * r ** 2;
+            values.push(result);
         },
         rect(r, r2) {
-            console.log(r * r2);
+            const result = r * r2;
+            values.push(result);
         },
         trapezoid(r, r2, r3) {
-            console.log((r + r2) * r3 / 2);
+            const result = (r + r2) * r3 / 2;
+            values.push(result);
         }
     };
     area[figure](r, r2, r3);
+    performed.push(figure);
 }
 
 function printExecutionSequence() {
     console.log('>계산수행순서 :', performed.join(', '));
+    console.log('>함수결과값 :', values.join(', '));
 }
 
 getArea('circle', 2)
