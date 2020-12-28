@@ -32,7 +32,7 @@ const data = {
 }
 
 
-
+//for...in 2번 사용
 const empty = [];
 for (key in data) {
     const main_key = data[key];
@@ -44,3 +44,17 @@ for (key in data) {
     }
 }
 console.log(empty);
+
+
+//foreach
+const empty2 = [];
+for (key in data) {
+    const main_key2 = data[key];
+    Object.keys(main_key2).forEach(function (el) {
+        const value2 = main_key2[el]
+        if (typeof (value2) === 'number') {
+            empty2.push(el)
+        }
+    });
+}
+console.log(empty2);
