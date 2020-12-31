@@ -34,6 +34,38 @@ const todos = [{
     }
 ];
 
+//sol1)--------------------------------------------------------------
+
+function dataCheck(todos) {
+    return todos.reduce(function (acc, obj) {
+        const key = obj.status;
+        if (!acc[key]) {
+            acc[key] = [];
+        }
+        acc[key].push(obj.name);
+        return acc;
+    }, {})
+}
+
+const data = dataCheck(todos);
+// console.log(data)
+
+
+const show2 = (obj) => {
+    if (obj === "all") {
+        console.log("현재상태___todo:", data.todo.length,
+            "doing:", data.doing.length, "done:", data.done.length)
+    } else if (data[obj] !== undefined) {
+        console.log(obj, '리스트: 총 갯수:', data[obj].length, "건,", data[obj].join(","));
+    } else {
+        console.log("입력값이 잘못되었습니다.")
+    }
+}
+show2("all")
+show2("todo")
+
+//sol2)-------------------------------------------------------------
+
 const dataObj = {
     "todo": [],
     "doing": [],
@@ -59,8 +91,8 @@ const show = (obj) => {
     }
 }
 
-dataInput(todos);
-show("all");
-show("todo");
-show("doing");
-show("hi");
+// dataInput(todos);
+// show("all");
+// show("todo");
+// show("doing");
+// show("hi");
